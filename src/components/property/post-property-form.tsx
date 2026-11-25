@@ -1,9 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Lock } from "lucide-react";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { categoryLabels, cities } from "@/config/site";
+import { getPlan } from "@/data/plans";
+import { usePlan } from "@/store/plan";
 import { postPropertySchema, type PostPropertyInput } from "@/lib/validations";
 
 const field =
@@ -38,10 +41,38 @@ export function PostPropertyForm() {
     defaultValues: { role: "owner", listingType: "sale", category: "apartment", city: "" },
   });
 
+  const { hydrated, plan: planId, postedCount, recordPost } = usePlan();
+  const plan = getPlan(planId);
+  const limitReached = hydrated && postedCount >= plan.listingLimit;
+  const limitLabel = Number.isFinite(plan.listingLimit) ? plan.listingLimit : "unlimited";
+
   const onSubmit = async (data: PostPropertyInput) => {
     // TODO: POST to the backend, e.g. api("/properties", { method: "POST", body: JSON.stringify(data) })
     void data;
+    recordPost();
   };
+
+  if (limitReached && !isSubmitSuccessful) {
+    return (
+      <div
+        role="status"
+        className="grid place-items-center rounded-2xl border border-amber-200 bg-amber-50 p-10 text-center dark:border-amber-900 dark:bg-amber-950/40"
+      >
+        <Lock className="size-12 text-amber-600" />
+        <h2 className="mt-4 text-2xl font-bold">You&apos;ve used all {limitLabel} listings</h2>
+        <p className="mt-2 text-slate-600 dark:text-slate-300">
+          Your {plan.name} plan includes {limitLabel} active listings. Take a plan to post more
+          properties and get priority placement.
+        </p>
+        <Link
+          href="/plans"
+          className="mt-6 rounded-full bg-emerald-600 px-6 py-2.5 font-semibold text-white hover:bg-emerald-700"
+        >
+          Take a plan
+        </Link>
+      </div>
+    );
+  }
 
   if (isSubmitSuccessful) {
     return (
@@ -150,8 +181,16 @@ export function PostPropertyForm() {
         disabled={isSubmitting}
         className="w-full rounded-lg bg-emerald-600 py-3 font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
       >
-        {isSubmitting ? "Submitting…" : "Post property for free"}
+        {isSubmitting ? "Submitting…" : "Post property"}
       </button>
+      {hydrated && (
+        <p className="text-center text-xs text-slate-500">
+          {postedCount} of {limitLabel} listings used on the {plan.name} plan.{" "}
+          <Link href="/plans" className="font-semibold text-emerald-600 hover:underline">
+            Need more? Take a plan
+          </Link>
+        </p>
+      )}
     </form>
   );
 }

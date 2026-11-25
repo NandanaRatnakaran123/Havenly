@@ -8,6 +8,7 @@ const columns = [
     links: [
       { label: "Buy a home", href: "/properties?type=sale" },
       { label: "Rent a home", href: "/properties?type=rent" },
+      { label: "Plans & pricing", href: "/plans" },
       { label: "Commercial spaces", href: "/properties?category=commercial" },
       { label: "Plots & land", href: "/properties?category=plot" },
     ],
