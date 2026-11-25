@@ -25,16 +25,16 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-emerald-700">
+      <section className="relative overflow-hidden bg-slate-900">
         <HeroSlideshow />
-        <div className="absolute -bottom-32 -left-20 size-96 rounded-full bg-teal-300/20 blur-3xl" />
         <div className="relative mx-auto max-w-7xl px-4 pt-16 pb-14 sm:pt-24 sm:pb-16">
           <h1 className="max-w-3xl text-4xl leading-tight font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Find a home you&apos;ll <span className="text-amber-300">love living in.</span>
+            Houses, apartments, flats &amp; plots —{" "}
+            <span className="text-amber-300">find your perfect property.</span>
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-emerald-50">
-            Verified flats, villas, plots and offices to buy or rent across India — contact owners
-            directly, with no brokerage hassle.
+          <p className="mt-4 max-w-2xl text-lg text-white">
+            Buy, sell or rent apartments, flats, villas, plots and commercial spaces across India —
+            contact owners directly, with no brokerage hassle.
           </p>
           {/* Generous gap so the slideshow photo stays visible above the search card */}
           <div className="mt-16 sm:mt-28 lg:mt-44">

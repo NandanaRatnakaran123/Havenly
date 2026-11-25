@@ -63,7 +63,7 @@ export function Stats() {
         <div key={s.label}>
           <dt className="sr-only">{s.label}</dt>
           <dd className="text-2xl font-extrabold sm:text-3xl">{s.value}</dd>
-          <dd className="text-sm text-emerald-100">{s.label}</dd>
+          <dd className="text-sm text-white/90">{s.label}</dd>
         </div>
       ))}
     </dl>

@@ -59,7 +59,7 @@ export function Footer() {
               <Phone className="size-4 text-emerald-400" /> 1800-000-0000 (toll free)
             </li>
             <li className="flex items-center gap-2">
-              <Mail className="size-4 text-emerald-400" /> hello@havenly.example
+              <Mail className="size-4 text-emerald-400" /> hello@havenly.com
             </li>
             <li className="flex items-center gap-2">
               <MapPin className="size-4 text-emerald-400" /> Bengaluru, India
