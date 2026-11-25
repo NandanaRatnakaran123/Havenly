@@ -8,7 +8,8 @@ import { budgetOptions } from "@/lib/filters";
 import { cn } from "@/lib/utils";
 import type { ListingType, PropertyCategory } from "@/types/property";
 
-const tabs: { label: string; type: ListingType; category?: PropertyCategory }[] = [
+const tabs: { label: string; type?: ListingType; category?: PropertyCategory }[] = [
+  { label: "All" },
   { label: "Buy", type: "sale" },
   { label: "Rent", type: "rent" },
   { label: "Commercial", type: "sale", category: "commercial" },
@@ -31,7 +32,8 @@ export function HeroSearch() {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const params = new URLSearchParams({ type: current.type });
+    const params = new URLSearchParams();
+    if (current.type) params.set("type", current.type);
     const cat = current.category ?? category;
     if (cat) params.set("category", cat);
     if (city) params.set("city", city);
@@ -102,9 +104,14 @@ export function HeroSearch() {
         </label>
         <label className="md:col-span-2">
           <span className="sr-only">Budget</span>
-          <select value={budget} onChange={(e) => setBudget(e.target.value)} className={selectCls}>
-            <option value="">Any budget</option>
-            {budgetOptions[current.type].map((b, i) => (
+          <select
+            value={budget}
+            disabled={!current.type}
+            onChange={(e) => setBudget(e.target.value)}
+            className={cn(selectCls, "disabled:opacity-70")}
+          >
+            <option value="">{current.type ? "Any budget" : "Budget (pick Buy/Rent)"}</option>
+            {(current.type ? budgetOptions[current.type] : []).map((b, i) => (
               <option key={b.label} value={i}>
                 {b.label}
               </option>

@@ -36,7 +36,8 @@ export const sortLabels: Record<SortKey, string> = {
 };
 
 export interface PropertyFilters {
-  type: ListingType;
+  /** Omit to include both sale and rent listings. */
+  type?: ListingType;
   city?: string;
   category?: PropertyCategory;
   /** Minimum bedrooms (4 means "4+"). */
@@ -51,11 +52,12 @@ export interface PropertyFilters {
 }
 
 export function filterProperties(list: Property[], f: PropertyFilters): Property[] {
-  const budget = f.budget !== undefined ? budgetOptions[f.type][f.budget] : undefined;
+  const budget =
+    f.budget !== undefined && f.type ? budgetOptions[f.type][f.budget] : undefined;
   const q = f.q?.trim().toLowerCase();
 
   const result = list.filter((p) => {
-    if (p.type !== f.type) return false;
+    if (f.type && p.type !== f.type) return false;
     if (f.city && p.city !== f.city) return false;
     if (f.category && p.category !== f.category) return false;
     if (f.beds !== undefined && p.bedrooms < f.beds) return false;

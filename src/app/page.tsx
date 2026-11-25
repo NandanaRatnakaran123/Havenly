@@ -29,8 +29,8 @@ export default function HomePage() {
         <HeroSlideshow />
         <div className="relative mx-auto max-w-7xl px-4 pt-16 pb-14 sm:pt-24 sm:pb-16">
           <h1 className="max-w-3xl text-4xl leading-tight font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Houses, apartments, flats &amp; plots —{" "}
-            <span className="text-amber-300">find your perfect property.</span>
+            Discover Exceptional Properties,{" "}
+            <span className="text-amber-300">Curated for Your Future.</span>
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-white">
             Buy, sell or rent apartments, flats, villas, plots and commercial spaces across India —

@@ -19,7 +19,9 @@ const field =
   "h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 dark:border-slate-700 dark:bg-slate-900";
 
 function parseFilters(sp: URLSearchParams): PropertyFilters {
-  const type: ListingType = sp.get("type") === "rent" ? "rent" : "sale";
+  const typeParam = sp.get("type");
+  const type: ListingType | undefined =
+    typeParam === "rent" ? "rent" : typeParam === "sale" ? "sale" : undefined;
   const category = sp.get("category") as PropertyCategory | null;
   const beds = sp.get("beds");
   const budget = sp.get("budget");
@@ -32,7 +34,8 @@ function parseFilters(sp: URLSearchParams): PropertyFilters {
     city: sp.get("city") || undefined,
     category: category && category in categoryLabels ? category : undefined,
     beds: beds ? Number(beds) : undefined,
-    budget: budgetIdx !== undefined && budgetOptions[type][budgetIdx] ? budgetIdx : undefined,
+    budget:
+      type && budgetIdx !== undefined && budgetOptions[type][budgetIdx] ? budgetIdx : undefined,
     q: sp.get("q") || undefined,
     verified: sp.get("verified") === "1",
     by: by === "owner" || by === "agent" || by === "builder" ? by : undefined,
@@ -58,18 +61,19 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
     router.replace(`${pathname}?${next.toString()}`, { scroll: false });
   }
 
-  const title = `${filters.category ? categoryLabels[filters.category] : "Properties"} for ${
-    filters.type === "sale" ? "sale" : "rent"
-  }${filters.city ? ` in ${filters.city}` : ""}`;
+  const forWhat = filters.type === "sale" ? " for sale" : filters.type === "rent" ? " for rent" : "";
+  const title = `${filters.category ? categoryLabels[filters.category] : "Properties"}${forWhat}${
+    filters.city ? ` in ${filters.city}` : ""
+  }`;
 
   const filterPanel = (
     <div className="space-y-5">
       <div>
         <span className="mb-2 block text-sm font-semibold">I want to</span>
-        <div className="grid grid-cols-2 gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
-          {(["sale", "rent"] as const).map((t) => (
+        <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
+          {([undefined, "sale", "rent"] as const).map((t) => (
             <button
-              key={t}
+              key={t ?? "all"}
               type="button"
               onClick={() => update({ type: t, budget: undefined })}
               className={cn(
@@ -79,7 +83,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                   : "text-slate-600 dark:text-slate-400",
               )}
             >
-              {t === "sale" ? "Buy" : "Rent"}
+              {t === undefined ? "All" : t === "sale" ? "Buy" : "Rent"}
             </button>
           ))}
         </div>
@@ -133,11 +137,12 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         <span className="mb-2 block text-sm font-semibold">Budget</span>
         <select
           value={filters.budget ?? ""}
+          disabled={!filters.type}
           onChange={(e) => update({ budget: e.target.value || undefined })}
-          className={field}
+          className={cn(field, "disabled:opacity-60")}
         >
-          <option value="">Any budget</option>
-          {budgetOptions[filters.type].map((b, i) => (
+          <option value="">{filters.type ? "Any budget" : "Pick Buy or Rent first"}</option>
+          {(filters.type ? budgetOptions[filters.type] : []).map((b, i) => (
             <option key={b.label} value={i}>
               {b.label}
             </option>
@@ -201,7 +206,11 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
 
       <button
         type="button"
-        onClick={() => router.replace(`${pathname}?type=${filters.type}`, { scroll: false })}
+        onClick={() =>
+          router.replace(filters.type ? `${pathname}?type=${filters.type}` : pathname, {
+            scroll: false,
+          })
+        }
         className="w-full rounded-lg border border-slate-200 py-2 text-sm font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
       >
         Clear filters
